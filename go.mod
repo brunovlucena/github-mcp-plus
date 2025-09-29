@@ -1,4 +1,4 @@
-module github.com/github/github-mcp-server
+module github.com/bruno-notifi/github-mcp-plus
 
 go 1.23.7
 
