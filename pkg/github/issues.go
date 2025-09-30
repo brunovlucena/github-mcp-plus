@@ -1835,7 +1835,13 @@ func AddIssueCommentWithAttachment(getClient GetClientFn, t translations.Transla
 				fileName = filepath.Base(filePath)
 			}
 
-			// Create comment using the generic template structure
+			// Read the file content for the evidence section
+			fileContent, err := os.ReadFile(filePath)
+			if err != nil {
+				return mcp.NewToolResultError(fmt.Sprintf("Failed to read file %s: %v", filePath, err)), nil
+			}
+
+			// Create comment using the generic template structure with file content in evidence section
 			commentBody := fmt.Sprintf("## 🔍 Verification Results - Investigation\n\n"+
 				"I've verified the issue by checking the actual configuration. Here are the findings:\n\n"+
 				"### ✅ Issue Confirmed - %s\n"+
@@ -1849,13 +1855,13 @@ func AddIssueCommentWithAttachment(getClient GetClientFn, t translations.Transla
 				"The configuration is **missing required elements** as described in the issue:\n"+
 				"%s\n\n"+
 				"### 📸 Evidence Screenshot\n"+
-				"Attached is a screenshot showing the investigation results.\n\n"+
+				"```\n%s\n```\n\n"+
 				"### 🎯 Conclusion\n"+
 				"The issue is **100%% accurate**. %s\n\n"+
 				"**Next Step**: %s\n\n"+
 				"---\n\n"+
-				"**Additional Details**:\n%s",
-				body, body, body, body, body, body, body, body, body)
+				"**Additional Details**:\n%s", 
+				body, body, body, body, body, string(fileContent), body, body, body)
 
 			comment := &github.IssueComment{
 				Body: github.Ptr(commentBody),
