@@ -13,11 +13,11 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/github/github-mcp-server/pkg/errors"
-	"github.com/github/github-mcp-server/pkg/github"
-	mcplog "github.com/github/github-mcp-server/pkg/log"
-	"github.com/github/github-mcp-server/pkg/raw"
-	"github.com/github/github-mcp-server/pkg/translations"
+	"github.com/bruno-notifi/github-mcp-plus/pkg/errors"
+	"github.com/bruno-notifi/github-mcp-plus/pkg/github"
+	mcplog "github.com/bruno-notifi/github-mcp-plus/pkg/log"
+	"github.com/bruno-notifi/github-mcp-plus/pkg/raw"
+	"github.com/bruno-notifi/github-mcp-plus/pkg/translations"
 	gogithub "github.com/google/go-github/v74/github"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
@@ -35,11 +35,11 @@ type MCPServerConfig struct {
 	Token string
 
 	// EnabledToolsets is a list of toolsets to enable
-	// See: https://github.com/github/github-mcp-server?tab=readme-ov-file#tool-configuration
+	// See: https://github.com/bruno-notifi/github-mcp-plus?tab=readme-ov-file#tool-configuration
 	EnabledToolsets []string
 
 	// Whether to enable dynamic toolsets
-	// See: https://github.com/github/github-mcp-server?tab=readme-ov-file#dynamic-tool-discovery
+	// See: https://github.com/bruno-notifi/github-mcp-plus?tab=readme-ov-file#dynamic-tool-discovery
 	DynamicToolsets bool
 
 	// ReadOnly indicates if we should only offer read-only tools
@@ -170,18 +170,18 @@ type StdioServerConfig struct {
 	Token string
 
 	// EnabledToolsets is a list of toolsets to enable
-	// See: https://github.com/github/github-mcp-server?tab=readme-ov-file#tool-configuration
+	// See: https://github.com/bruno-notifi/github-mcp-plus?tab=readme-ov-file#tool-configuration
 	EnabledToolsets []string
 
 	// Whether to enable dynamic toolsets
-	// See: https://github.com/github/github-mcp-server?tab=readme-ov-file#dynamic-tool-discovery
+	// See: https://github.com/bruno-notifi/github-mcp-plus?tab=readme-ov-file#dynamic-tool-discovery
 	DynamicToolsets bool
 
 	// ReadOnly indicates if we should only register read-only tools
 	ReadOnly bool
 
 	// ExportTranslations indicates if we should export translations
-	// See: https://github.com/github/github-mcp-server?tab=readme-ov-file#i18n--overriding-descriptions
+	// See: https://github.com/bruno-notifi/github-mcp-plus?tab=readme-ov-file#i18n--overriding-descriptions
 	ExportTranslations bool
 
 	// EnableCommandLogging indicates if we should log commands

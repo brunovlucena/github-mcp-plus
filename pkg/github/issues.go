@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
-	ghErrors "github.com/github/github-mcp-server/pkg/errors"
-	"github.com/github/github-mcp-server/pkg/translations"
+	ghErrors "github.com/bruno-notifi/github-mcp-plus/pkg/errors"
+	"github.com/bruno-notifi/github-mcp-plus/pkg/translations"
 	"github.com/go-viper/mapstructure/v2"
 	"github.com/google/go-github/v74/github"
 	"github.com/mark3labs/mcp-go/mcp"
@@ -1765,5 +1767,94 @@ func AssignCodingAgentPrompt(t translations.TranslationHelperFunc) (tool mcp.Pro
 			return &mcp.GetPromptResult{
 				Messages: messages,
 			}, nil
+		}
+}
+
+// AddIssueCommentWithAttachment adds a comment with file attachment to a GitHub issue
+func AddIssueCommentWithAttachment(getClient GetClientFn, t translations.TranslationHelperFunc) (tool mcp.Tool, handler server.ToolHandlerFunc) {
+	return mcp.NewTool("add_issue_comment_with_attachment",
+			mcp.WithDescription(t("TOOL_ADD_ISSUE_COMMENT_WITH_ATTACHMENT_DESCRIPTION", "Add a comment with file attachment to a specific issue in a GitHub repository.")),
+			mcp.WithToolAnnotation(mcp.ToolAnnotation{
+				Title:        t("TOOL_ADD_ISSUE_COMMENT_WITH_ATTACHMENT_USER_TITLE", "Add comment with attachment to issue"),
+				ReadOnlyHint: ToBoolPtr(false),
+			}),
+			mcp.WithString("owner",
+				mcp.Required(),
+				mcp.Description("Repository owner"),
+			),
+			mcp.WithString("repo",
+				mcp.Required(),
+				mcp.Description("Repository name"),
+			),
+			mcp.WithNumber("issue_number",
+				mcp.Required(),
+				mcp.Description("Issue number to comment on"),
+			),
+			mcp.WithString("body",
+				mcp.Required(),
+				mcp.Description("Comment content"),
+			),
+			mcp.WithString("file_path",
+				mcp.Required(),
+				mcp.Description("Path to the file to attach"),
+			),
+			mcp.WithString("file_name",
+				mcp.Description("Custom filename for the attachment (optional)"),
+			),
+		),
+		func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+			owner, err := RequiredParam[string](request, "owner")
+			if err != nil {
+				return mcp.NewToolResultError(err.Error()), nil
+			}
+			repo, err := RequiredParam[string](request, "repo")
+			if err != nil {
+				return mcp.NewToolResultError(err.Error()), nil
+			}
+			issueNumber, err := RequiredInt(request, "issue_number")
+			if err != nil {
+				return mcp.NewToolResultError(err.Error()), nil
+			}
+			body, err := RequiredParam[string](request, "body")
+			if err != nil {
+				return mcp.NewToolResultError(err.Error()), nil
+			}
+			filePath, err := RequiredParam[string](request, "file_path")
+			if err != nil {
+				return mcp.NewToolResultError(err.Error()), nil
+			}
+			fileName, _ := OptionalParam[string](request, "file_name")
+
+			// Read the file content
+			fileContent, err := os.ReadFile(filePath)
+			if err != nil {
+				return mcp.NewToolResultError(fmt.Sprintf("Failed to read file %s: %v", filePath, err)), nil
+			}
+
+			// Use filename from path if not provided
+			if fileName == "" {
+				fileName = filepath.Base(filePath)
+			}
+
+			// Create a more detailed comment body that includes the file content
+			enhancedBody := fmt.Sprintf("%s\n\n---\n**Attachment: %s**\n```\n%s\n```", body, fileName, string(fileContent))
+			
+			comment := &github.IssueComment{
+				Body: github.Ptr(enhancedBody),
+			}
+
+			client, err := getClient(ctx)
+			if err != nil {
+				return nil, fmt.Errorf("failed to get GitHub client: %w", err)
+			}
+			createdComment, resp, err := client.Issues.CreateComment(ctx, owner, repo, issueNumber, comment)
+			if err != nil {
+				return mcp.NewToolResultError(fmt.Sprintf("Failed to create comment: %v", err)), nil
+			}
+			if resp.StatusCode != http.StatusCreated {
+				return mcp.NewToolResultError(fmt.Sprintf("Unexpected status code: %d", resp.StatusCode)), nil
+			}
+
+			return mcp.NewToolResultText(fmt.Sprintf("Comment with attachment added successfully. Comment ID: %d", *createdComment.ID)), nil
 		}
 }

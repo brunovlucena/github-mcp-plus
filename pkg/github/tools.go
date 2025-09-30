@@ -3,9 +3,9 @@ package github
 import (
 	"context"
 
-	"github.com/github/github-mcp-server/pkg/raw"
-	"github.com/github/github-mcp-server/pkg/toolsets"
-	"github.com/github/github-mcp-server/pkg/translations"
+	"github.com/bruno-notifi/github-mcp-plus/pkg/raw"
+	"github.com/bruno-notifi/github-mcp-plus/pkg/toolsets"
+	"github.com/bruno-notifi/github-mcp-plus/pkg/translations"
 	"github.com/google/go-github/v74/github"
 	"github.com/mark3labs/mcp-go/server"
 	"github.com/shurcooL/githubv4"
@@ -65,6 +65,7 @@ func DefaultToolsetGroup(readOnly bool, getClient GetClientFn, getGQLClient GetG
 		AddWriteTools(
 			toolsets.NewServerTool(CreateIssue(getClient, t)),
 			toolsets.NewServerTool(AddIssueComment(getClient, t)),
+			toolsets.NewServerTool(AddIssueCommentWithAttachment(getClient, t)),
 			toolsets.NewServerTool(UpdateIssue(getClient, getGQLClient, t)),
 			toolsets.NewServerTool(AssignCopilotToIssue(getGQLClient, t)),
 			toolsets.NewServerTool(AddSubIssue(getClient, t)),

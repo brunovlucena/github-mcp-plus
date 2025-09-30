@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/github/github-mcp-server/internal/toolsnaps"
-	"github.com/github/github-mcp-server/pkg/raw"
-	"github.com/github/github-mcp-server/pkg/translations"
+	"github.com/bruno-notifi/github-mcp-plus/internal/toolsnaps"
+	"github.com/bruno-notifi/github-mcp-plus/pkg/raw"
+	"github.com/bruno-notifi/github-mcp-plus/pkg/translations"
 	"github.com/google/go-github/v74/github"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/migueleliasweb/go-github-mock/src/mock"

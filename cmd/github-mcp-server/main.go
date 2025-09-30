@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/github/github-mcp-server/internal/ghmcp"
-	"github.com/github/github-mcp-server/pkg/github"
+	"github.com/bruno-notifi/github-mcp-plus/internal/ghmcp"
+	"github.com/bruno-notifi/github-mcp-plus/pkg/github"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"

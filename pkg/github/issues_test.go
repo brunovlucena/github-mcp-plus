@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/github/github-mcp-server/internal/githubv4mock"
-	"github.com/github/github-mcp-server/internal/toolsnaps"
-	"github.com/github/github-mcp-server/pkg/translations"
+	"github.com/bruno-notifi/github-mcp-plus/internal/githubv4mock"
+	"github.com/bruno-notifi/github-mcp-plus/internal/toolsnaps"
+	"github.com/bruno-notifi/github-mcp-plus/pkg/translations"
 	"github.com/google/go-github/v74/github"
 	"github.com/migueleliasweb/go-github-mock/src/mock"
 	"github.com/shurcooL/githubv4"
